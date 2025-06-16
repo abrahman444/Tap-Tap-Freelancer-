@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rewarded Ads Game</title>
+    <!-- Monetag SDK (আপনার Publisher ID ব্যবহার করুন) -->
+    <script src="https://cdn.monetag.com/tag/js/2929510.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        .game-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        .score-board {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+        }
+        .score-box {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            min-width: 100px;
+        }
+        .click-btn {
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+        .click-btn:hover {
+            background-color: #27ae60;
+            transform: translateY(-2px);
+        }
+        .click-btn:active {
+            transform: translateY(0);
+        }
+        .reward-btn {
+            background-color: #e67e22;
+            padding: 10px 20px;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .reward-btn:hover {
+            background-color: #d35400;
+        }
+        .message {
+            margin-top: 20px;
+            min-height: 24px;
+            color: #e74c3c;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>Rewarded Ads গেম</h1>
+        
+        <div class="score-board">
+            <div class="score-box">
+                <div>স্কোর</div>
+                <div id="score">0</div>
+            </div>
+            <div class="score-box">
+                <div>কয়েন</div>
+                <div id="coins">0</div>
+            </div>
+        </div>
+        
+        <button class="click-btn" id="clickBtn">ক্লিক করুন!</button>
+        <button class="reward-btn" id="rewardBtn">এড দেখে 50 কয়েন পান</button>
+        
+        <div class="message" id="message"></div>
+    </div>
+
+    <script>
+        // গেম ভেরিয়েবল
+        let score = 0;
+        let coins = 0;
+        const clickBtn = document.getElementById('clickBtn');
+        const rewardBtn = document.getElementById('rewardBtn');
+        const scoreDisplay = document.getElementById('score');
+        const coinsDisplay = document.getElementById('coins');
+        const messageDisplay = document.getElementById('message');
+
+        // ক্লিক ইভেন্ট হ্যান্ডলার
+        clickBtn.addEventListener('click', function() {
+            score++;
+            scoreDisplay.textContent = score;
+            
+            // প্রতি 15 ক্লিকে মেসেজ দেখান
+            if (score % 15 === 0) {
+                showMessage(`15 ক্লিক সম্পূর্ণ! এড দেখে বোনাস পান`);
+            }
+        });
+
+        // রিওয়ার্ডেড এড বাটন
+        rewardBtn.addEventListener('click', function() {
+            showRewardedAd();
+        });
+
+        // রিওয়ার্ডেড এড দেখানোর ফাংশন
+        function showRewardedAd() {
+            show_9455376().then(() => {
+                // এড সম্পূর্ণ দেখার পর রিওয়ার্ড
+                coins += 50;
+                coinsDisplay.textContent = coins;
+                showMessage('ধন্যবাদ! আপনি 50 কয়েন পেয়েছেন', 'success');
+            }).catch(error => {
+                console.error('এড ত্রুটি:', error);
+                showMessage('এড লোড করতে ব্যর্থ। পরে আবার চেষ্টা করুন', 'error');
+            });
+        }
+
+        // মেসেজ প্রদর্শন
+        function showMessage(msg, type = 'info') {
+            messageDisplay.textContent = msg;
+            messageDisplay.style.color = type === 'error' ? '#e74c3c' : 
+                                      type === 'success' ? '#2ecc71' : '#3498db';
+            
+            // 3 সেকেন্ড পর মেসেজ হাইড
+            setTimeout(() => {
+                messageDisplay.textContent = '';
+            }, 3000);
+        }
+
+        // Monetag রিওয়ার্ডেড ফাংশন (আপনার স্ক্রিনশট অনুযায়ী)
+        function show_9455376() {
+            return new Promise((resolve, reject) => {
+                monetag.loadRewardedAd({
+                    slotId: '9455376', // আপনার Ad Unit ID
+                    onClose: function(completed) {
+                        if (completed) {
+                            resolve(); // এড সম্পূর্ণ দেখলে
+                        } else {
+                            reject(new Error('User skipped ad')); // এড স্কিপ করলে
+                        }
+                    },
+                    onError: function(error) {
+                        reject(error); // লোডে ত্রুটি হলে
+                    }
+                });
+            });
+        }
+    </script>
+</body>
+</html>
